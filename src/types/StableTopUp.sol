@@ -12,7 +12,7 @@ import {ConditionalOrdersUtilsLib as Utils} from "./ConditionalOrdersUtilsLib.so
 string constant SUFFICIENT_BALANCE = "buyToken balance above threshold";
 
 /**
- * @title A smart contract that trades whenever its balance of a certain token exceeds a target threshold
+ * @title A smart contract that tops up the buyToken balance to a specified topUpValue whenever the balance falls below threshold.
  */
 contract StableTopUp is BaseConditionalOrder {
     struct Data {
@@ -52,7 +52,8 @@ contract StableTopUp is BaseConditionalOrder {
             data.buyToken,
             data.receiver,
             // Sell Amount as 10% more than buyAmount
-            // Assuming Stable Coins (Balance LP tokens are "stable").
+            // This is not super accurate, but does, kinda, cover most cases... kinda.
+            // Stable Balancer Pools have tokens are "stable" LP tokens... kinda.
             (buyAmount * 110) / 100,
             buyAmount,
             Utils.validToBucket(data.validityBucketSeconds),
