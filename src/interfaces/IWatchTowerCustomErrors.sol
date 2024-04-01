@@ -11,9 +11,5 @@ pragma solidity >=0.8.0 <0.9.0;
  * Protocol orderbook at regular intervals.
  */
 contract IWatchTowerCustomErrors {
-    /**
-     * No order is currently available for trading, but the watchtower should
-     * try again at the next block.
-     */
-    error PollTryNextBlock(string message);
+    error PollTryAtEpoch(uint256 timestamp, string);
 }

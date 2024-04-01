@@ -37,8 +37,10 @@ contract SubmitSingleOrder is Script {
             sellToken: IERC20(address(1)),
             buyToken: IERC20(address(2)),
             receiver: address(0),
-            validityBucketSeconds: 10,
-            topUpTo: 100_000_000_000_000_000_000,
+            validityBucketSeconds: 30 minutes,
+            lowBalanceThreshold: 100_000_000_000_000_000_000,
+            topUpAmount: 400_000_000_000_000_000_000,
+            pollFrequency: 12 hours,
             appData: keccak256("forge.scripts.stable_top_up")
         });
 
