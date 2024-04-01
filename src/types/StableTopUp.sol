@@ -5,11 +5,12 @@ import {IERC20} from "@openzeppelin/interfaces/IERC20.sol";
 
 import "../BaseConditionalOrder.sol";
 import {ConditionalOrdersUtilsLib as Utils} from "./ConditionalOrdersUtilsLib.sol";
+import {IWatchtowerCustomErrors} from "../interfaces/IWatchtowerCustomErrors.sol";
 
 // --- error strings
 
 /// @dev The buy token balance is above the (minimum) threshold.
-string constant SUFFICIENT_BALANCE = "buyToken balance above threshold";
+string constant SUFFICIENT_BALANCE = "buyToken balance still above threshold";
 
 /**
  * @title A smart contract that tops up the buyToken balance to a specified topUpValue whenever the balance falls below threshold.
@@ -20,7 +21,6 @@ contract StableTopUp is BaseConditionalOrder {
         IERC20 buyToken;
         address receiver;
         uint32 validityBucketSeconds;
-        uint256 threshold;
         uint256 topUpTo;
         bytes32 appData;
     }
@@ -42,8 +42,8 @@ contract StableTopUp is BaseConditionalOrder {
 
         uint256 balance = data.buyToken.balanceOf(data.receiver);
         // Don't allow the order to be placed if the balance is less than the threshold.
-        if (balance >= data.threshold) {
-            revert IConditionalOrder.OrderNotValid(SUFFICIENT_BALANCE);
+        if (balance >= data.topUpTo) {
+            revert IWatchtowerCustomErrors.PollTryNextBlock(SUFFICIENT_BALANCE);
         }
         uint256 buyAmount = data.topUpTo - balance;
         // ensures that orders queried shortly after one another result in the same hash (to avoid spamming the orderbook)

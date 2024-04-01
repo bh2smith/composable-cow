@@ -28,6 +28,7 @@ import {TWAP} from "../src/types/twap/TWAP.sol";
 import {GoodAfterTime} from "../src/types/GoodAfterTime.sol";
 import {PerpetualStableSwap} from "../src/types/PerpetualStableSwap.sol";
 import {TradeAboveThreshold} from "../src/types/TradeAboveThreshold.sol";
+import {StableTopUp} from "../src/types/StableTopUp.sol";
 
 contract DeployAnvilStack is Script {
     // --- constants
@@ -70,6 +71,7 @@ contract DeployAnvilStack is Script {
         new GoodAfterTime();
         new PerpetualStableSwap();
         new TradeAboveThreshold();
+        new StableTopUp();
 
         vm.stopBroadcast();
 
