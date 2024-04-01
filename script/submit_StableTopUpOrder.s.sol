@@ -54,10 +54,10 @@ contract SubmitSingleOrder is Script {
                 composableCow.create,
                 (
                     IConditionalOrder.ConditionalOrderParams({
-                    handler: IConditionalOrder(topUpContract),
-                    salt: keccak256(abi.encodePacked("StableTopUp")),
-                    staticInput: abi.encode(topUpOrder)
-                }),
+                        handler: IConditionalOrder(topUpContract),
+                        salt: keccak256(abi.encodePacked("StableTopUp")),
+                        staticInput: abi.encode(topUpOrder)
+                    }),
                     true
                 )
             ),

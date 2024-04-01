@@ -33,13 +33,12 @@ contract StableTopUp is BaseConditionalOrder {
      * @dev If the `receivers`'s balance of `buyToken` is below the specified threshold, tops up the receiver to `topUpTo`
      * with from sellToken at the current market price (no limit!).
      */
-    function getTradeableOrder(
-        address owner,
-        address,
-        bytes32,
-        bytes calldata staticInput,
-        bytes calldata
-    ) public view override returns (GPv2Order.Data memory order) {
+    function getTradeableOrder(address owner, address, bytes32, bytes calldata staticInput, bytes calldata)
+        public
+        view
+        override
+        returns (GPv2Order.Data memory order)
+    {
         /// @dev Decode the payload into the trade below threshold parameters.
         StableTopUp.Data memory data = abi.decode(staticInput, (Data));
         uint256 nextPoll = block.timestamp + data.pollFrequency;
