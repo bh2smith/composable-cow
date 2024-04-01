@@ -10,7 +10,7 @@ pragma solidity >=0.8.0 <0.9.0;
  * @dev The watchtower is a service that automatically posts orders to the CoW
  * Protocol orderbook at regular intervals.
  */
-contract IWatchtowerCustomErrors {
+contract IWatchTowerCustomErrors {
     /**
      * No order is currently available for trading, but the watchtower should
      * try again at the next block.

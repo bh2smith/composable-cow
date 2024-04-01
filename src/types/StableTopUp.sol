@@ -5,7 +5,7 @@ import {IERC20} from "@openzeppelin/interfaces/IERC20.sol";
 
 import "../BaseConditionalOrder.sol";
 import {ConditionalOrdersUtilsLib as Utils} from "./ConditionalOrdersUtilsLib.sol";
-import {IWatchtowerCustomErrors} from "../interfaces/IWatchtowerCustomErrors.sol";
+import {IWatchTowerCustomErrors} from "../interfaces/IWatchTowerCustomErrors.sol";
 
 // --- error strings
 
@@ -43,7 +43,7 @@ contract StableTopUp is BaseConditionalOrder {
         uint256 balance = data.buyToken.balanceOf(data.receiver);
         // Don't allow the order to be placed if the balance is less than the threshold.
         if (balance >= data.topUpTo) {
-            revert IWatchtowerCustomErrors.PollTryNextBlock(SUFFICIENT_BALANCE);
+            revert IWatchTowerCustomErrors.PollTryNextBlock(SUFFICIENT_BALANCE);
         }
         uint256 buyAmount = data.topUpTo - balance;
         // ensures that orders queried shortly after one another result in the same hash (to avoid spamming the orderbook)
