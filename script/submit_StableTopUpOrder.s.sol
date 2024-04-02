@@ -26,6 +26,8 @@ import {StableTopUp} from "../src/types/StableTopUp.sol";
 contract SubmitSingleOrder is Script {
     using SafeLib for Safe;
 
+    event Log(string message, bytes32 salt, bytes value);
+
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
 
@@ -34,18 +36,24 @@ contract SubmitSingleOrder is Script {
         ComposableCoW composableCow = ComposableCoW(vm.envAddress("COMPOSABLE_COW"));
 
         StableTopUp.Data memory topUpOrder = StableTopUp.Data({
-            sellToken: IERC20(address(1)),
-            buyToken: IERC20(address(2)),
-            receiver: address(0),
+            sellToken: IERC20(vm.envAddress("SDAI")),
+            buyToken: IERC20(vm.envAddress("EURE")),
+            receiver: vm.envAddress("GNOSIS_PAY_SAFE"),
             validityBucketSeconds: 30 minutes,
+            // 100 EURe
             lowBalanceThreshold: 100_000_000_000_000_000_000,
-            topUpAmount: 400_000_000_000_000_000_000,
+            // 200 EURe
+            topUpAmount: 200_000_000_000_000_000_000,
             pollFrequency: 12 hours,
-            appData: keccak256("forge.scripts.stable_top_up")
+            appData: vm.envBytes32("APP_DATA")
         });
-
         vm.startBroadcast(deployerPrivateKey);
 
+        bytes memory input = abi.encode(topUpOrder);
+        bytes32 salt = keccak256(abi.encodePacked("StableTopUp"));
+        emit Log("staticInput", salt, input);
+
+        revert("Send the emitted log data in Safe Tx Builder!");
         // call to ComposableCoW to submit a single order
         safe.executeSingleOwner(
             address(composableCow),
@@ -55,8 +63,8 @@ contract SubmitSingleOrder is Script {
                 (
                     IConditionalOrder.ConditionalOrderParams({
                         handler: IConditionalOrder(topUpContract),
-                        salt: keccak256(abi.encodePacked("StableTopUp")),
-                        staticInput: abi.encode(topUpOrder)
+                        salt: salt,
+                        staticInput: input
                     }),
                     true
                 )
