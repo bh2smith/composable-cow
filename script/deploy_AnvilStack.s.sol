@@ -28,6 +28,7 @@ import {TWAP} from "../src/types/twap/TWAP.sol";
 import {GoodAfterTime} from "../src/types/GoodAfterTime.sol";
 import {PerpetualStableSwap} from "../src/types/PerpetualStableSwap.sol";
 import {TradeAboveThreshold} from "../src/types/TradeAboveThreshold.sol";
+import {StableTopUp} from "../src/types/StableTopUp.sol";
 
 contract DeployAnvilStack is Script {
     // --- constants
@@ -70,6 +71,7 @@ contract DeployAnvilStack is Script {
         new GoodAfterTime();
         new PerpetualStableSwap();
         new TradeAboveThreshold();
+        new StableTopUp();
 
         vm.stopBroadcast();
 
@@ -106,26 +108,14 @@ contract DeployAnvilStack is Script {
         //   Arg [1] : weth (address): 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
         //   Arg [2] : pauseWindowDuration (uint256): 7776000
         //   Arg [3] : bufferPeriodDuration (uint256): 2592000
-        vault = GPv2IVault(
-            address(
-                new Vault(
-                    authorizer,
-                    weth,
-                    PAUSE_WINDOW_DURATION,
-                    BUFFER_PERIOD_DURATION
-                )
-            )
-        );
+        vault = GPv2IVault(address(new Vault(authorizer, weth, PAUSE_WINDOW_DURATION, BUFFER_PERIOD_DURATION)));
 
         // deploy the allow list manager
         GPv2AllowListAuthentication allowList = new GPv2AllowListAuthentication();
         allowList.initializeManager(all);
 
         /// @dev the settlement contract is the main entry point for the CoW Protocol
-        settlement = new GPv2Settlement(
-            allowList,
-            vault
-        );
+        settlement = new GPv2Settlement(allowList, vault);
 
         /// @dev the relayer is the account authorized to spend the user's tokens
         relayer = address(settlement.vaultRelayer());
