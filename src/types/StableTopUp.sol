@@ -33,12 +33,13 @@ contract StableTopUp is BaseConditionalOrder {
      * @dev If the `receivers`'s balance of `buyToken` is below the specified threshold, tops up the receiver to `topUpTo`
      * with from sellToken at the current market price (no limit!).
      */
-    function getTradeableOrder(address owner, address, bytes32, bytes calldata staticInput, bytes calldata)
-        public
-        view
-        override
-        returns (GPv2Order.Data memory order)
-    {
+    function getTradeableOrder(
+        address owner,
+        address,
+        bytes32,
+        bytes calldata staticInput,
+        bytes calldata
+    ) public view override returns (GPv2Order.Data memory order) {
         /// @dev Decode the payload into the trade below threshold parameters.
         StableTopUp.Data memory data = abi.decode(staticInput, (Data));
         uint256 nextPoll = block.timestamp + data.pollFrequency;
@@ -46,7 +47,10 @@ contract StableTopUp is BaseConditionalOrder {
         uint256 receiverBalance = data.buyToken.balanceOf(data.receiver);
         // Don't allow the order to be placed if the balance is less than the threshold.
         if (receiverBalance >= data.lowBalanceThreshold) {
-            revert IWatchTowerCustomErrors.PollTryAtEpoch(nextPoll, SUFFICIENT_BALANCE);
+            revert IWatchTowerCustomErrors.PollTryAtEpoch(
+                nextPoll,
+                SUFFICIENT_BALANCE
+            );
         }
 
         uint256 buyAmount = data.topUpAmount;
@@ -57,7 +61,10 @@ contract StableTopUp is BaseConditionalOrder {
 
         uint256 funderBalance = data.sellToken.balanceOf(owner);
         if (!(funderBalance >= sellAmount)) {
-            revert IWatchTowerCustomErrors.PollTryAtEpoch(nextPoll, BALANCE_INSUFFICIENT);
+            revert IWatchTowerCustomErrors.PollTryAtEpoch(
+                nextPoll,
+                BALANCE_INSUFFICIENT
+            );
         }
 
         // ensures that orders queried shortly after one another result in the same hash (to avoid spamming the orderbook)
